@@ -1,0 +1,1500 @@
+{
+  "info": {
+    "_postman_id": "9162eaf3-de3c-49a1-b024-981ff4c9237d",
+    "name": "sdk adapter",
+    "description": "sdk_adapter: DFSP simulator connected to the Mojaloop hub through one SDK scheme adapter per DFSP.\n\nImport together with sdk_adapter.postman_environment.json and select that environment. Run a request in `auth` first: it stores the access token in the environment's `token`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "login sdkbank-user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "pm.environment.set(\"token\", jsonData.access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "sdk-adapter"
+                },
+                {
+                  "key": "username",
+                  "value": "sdkbank-user"
+                },
+                {
+                  "key": "password",
+                  "value": "sdkbank"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloak_url}}/realms/sdk/protocol/openid-connect/token",
+              "host": [
+                "{{keycloak_url}}"
+              ],
+              "path": [
+                "realms",
+                "sdk",
+                "protocol",
+                "openid-connect",
+                "token"
+              ]
+            },
+            "description": "Password grant as sdkbank-user; stores the access token in the environment's `token`."
+          },
+          "response": []
+        },
+        {
+          "name": "login sdkwallet-user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "pm.environment.set(\"token\", jsonData.access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "sdk-adapter"
+                },
+                {
+                  "key": "username",
+                  "value": "sdkwallet-user"
+                },
+                {
+                  "key": "password",
+                  "value": "sdkwallet"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloak_url}}/realms/sdk/protocol/openid-connect/token",
+              "host": [
+                "{{keycloak_url}}"
+              ],
+              "path": [
+                "realms",
+                "sdk",
+                "protocol",
+                "openid-connect",
+                "token"
+              ]
+            },
+            "description": "Password grant as sdkwallet-user; stores the access token in the environment's `token`."
+          },
+          "response": []
+        },
+        {
+          "name": "login sdk-admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "pm.environment.set(\"token\", jsonData.access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "sdk-adapter"
+                },
+                {
+                  "key": "username",
+                  "value": "sdk-admin"
+                },
+                {
+                  "key": "password",
+                  "value": "admin"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloak_url}}/realms/sdk/protocol/openid-connect/token",
+              "host": [
+                "{{keycloak_url}}"
+              ],
+              "path": [
+                "realms",
+                "sdk",
+                "protocol",
+                "openid-connect",
+                "token"
+              ]
+            },
+            "description": "Password grant as sdk-admin; stores the access token in the environment's `token`."
+          },
+          "response": []
+        }
+      ],
+      "description": "Each login replaces `token`; the DFSP-scoped endpoints act for the logged-in user's `fsp_id`."
+    },
+    {
+      "name": "dfsp",
+      "item": [
+        {
+          "name": "my dfsp",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/dfsp",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "dfsp"
+              ]
+            },
+            "description": "The logged-in DFSP with its POSITION and SETTLEMENT accounts."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "admin dfsps",
+      "item": [
+        {
+          "name": "list dfsps",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/admin/dfsps",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "dfsps"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create dfsp",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/admin/dfsps",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "dfsps"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fspId\": \"{{fspId}}\",\n  \"displayName\": \"New DFSP\",\n  \"currency\": \"CVE\",\n  \"sdkOutboundUrl\": \"{{sdkOutboundUrl}}\",\n  \"netDebitCap\": 1000000,\n  \"initialPosition\": 0,\n  \"initialFunds\": 1000000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates a hosted DFSP. `sdkOutboundUrl` is the outbound API of its SDK scheme adapter, which must already run (add it to docker/sdk/docker-compose.yml). `sdkInboundUrl` is optional and defaults to http://<fspId>-sdk:4000, the address the hub uses for the DFSP's callbacks. A Keycloak user with fsp_id = fspId is needed to operate it."
+          },
+          "response": []
+        },
+        {
+          "name": "get dfsp",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/admin/dfsps/{{fspId}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "dfsps",
+                "{{fspId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update dfsp",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/admin/dfsps/{{fspId}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "dfsps",
+                "{{fspId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"displayName\": \"New DFSP\",\n  \"sdkOutboundUrl\": \"{{sdkOutboundUrl}}\",\n  \"netDebitCap\": 2000000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Null fields keep their value. A changed sdkInboundUrl takes effect at the next onboarding."
+          },
+          "response": []
+        },
+        {
+          "name": "onboard dfsp in the hub",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/admin/dfsps/{{fspId}}/onboard",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "dfsps",
+                "{{fspId}}",
+                "onboard"
+              ]
+            },
+            "description": "Creates the participant in central-ledger with its NDC limit, registers the 11 callback endpoints pointing at the DFSP's SDK inbound API, activates it and records the initial funds (only once). Safe to repeat."
+          },
+          "response": []
+        }
+      ],
+      "description": "Needs the `admin` role: log in as sdk-admin."
+    },
+    {
+      "name": "customers",
+      "item": [
+        {
+          "name": "list customers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/customers",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "customers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create customer",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/customers",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "customers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maria Silva\",\n  \"contact\": {\n    \"phone\": \"{{msisdn}}\",\n    \"telephone\": null,\n    \"email\": \"maria@example.cv\"\n  },\n  \"address\": \"Praia\",\n  \"nif\": 123456789\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code < 300) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set(\"customerId\", body.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "get customer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/customers/{{customerId}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                "{{customerId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update customer",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/customers/{{customerId}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                "{{customerId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maria Silva\",\n  \"contact\": {\n    \"phone\": \"{{msisdn}}\",\n    \"telephone\": null,\n    \"email\": \"maria.silva@example.cv\"\n  },\n  \"address\": \"Mindelo\",\n  \"nif\": 123456789\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "accounts",
+      "item": [
+        {
+          "name": "list accounts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/accounts",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "accounts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "open account",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/accounts",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "accounts"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": {{customerId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code < 300) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set(\"accountId\", body.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "get account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/accounts/{{accountId}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "accounts",
+                "{{accountId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deposit",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/accounts/{{accountId}}/deposits",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "accounts",
+                "{{accountId}}",
+                "deposits"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 5000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "statement",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/accounts/{{accountId}}/statement",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "accounts",
+                "{{accountId}}",
+                "statement"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "parties",
+      "item": [
+        {
+          "name": "list parties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/parties",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "parties"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create party",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/parties",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "parties"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idType\": \"MSISDN\",\n  \"idValue\": \"{{msisdn}}\",\n  \"accountId\": {{accountId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Maps the identifier to a CUSTOMER account and registers it in the hub's ALS."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code < 300) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set(\"partyId\", body.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "get party",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/parties/{{partyId}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "parties",
+                "{{partyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "re-register party in the ALS",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/parties/{{partyId}}/registration",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "parties",
+                "{{partyId}}",
+                "registration"
+              ]
+            },
+            "description": "Registers the identifier in the ALS again through the DFSP's SDK (POST /accounts), e.g. after a hub reset. Succeeds when it is already registered to this DFSP."
+          },
+          "response": []
+        },
+        {
+          "name": "delete party",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/parties/{{partyId}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "parties",
+                "{{partyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "lookup party",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/parties/lookup/MSISDN/{{payeeMsisdn}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "parties",
+                "lookup",
+                "MSISDN",
+                "{{payeeMsisdn}}"
+              ]
+            },
+            "description": "FSPIOP discovery through the hub."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "transfers",
+      "item": [
+        {
+          "name": "send transfer (auto accept)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/transfers",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "transfers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": {\n    \"idType\": \"MSISDN\",\n    \"idValue\": \"{{payerMsisdn}}\"\n  },\n  \"to\": {\n    \"idType\": \"MSISDN\",\n    \"idValue\": \"{{payeeMsisdn}}\"\n  },\n  \"amount\": 100,\n  \"currency\": \"CVE\",\n  \"note\": \"postman test\",\n  \"autoAccept\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Runs discovery, quote and transfer through the payer's SDK in one call; the response carries the final state (COMMITTED or ABORTED)."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code < 300) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set(\"transferId\", body.transferId);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "send transfer (manual accept)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/transfers",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "transfers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": {\n    \"idType\": \"MSISDN\",\n    \"idValue\": \"{{payerMsisdn}}\"\n  },\n  \"to\": {\n    \"idType\": \"MSISDN\",\n    \"idValue\": \"{{payeeMsisdn}}\"\n  },\n  \"amount\": 100,\n  \"currency\": \"CVE\",\n  \"note\": \"postman test\",\n  \"autoAccept\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Returns at WAITING_FOR_PARTY_ACCEPTANCE (payee name resolved); continue with accept party, then accept quote."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code < 300) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set(\"transferId\", body.transferId);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "accept party",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/transfers/{{transferId}}/accept-party",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "transfers",
+                "{{transferId}}",
+                "accept-party"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accept\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "accept quote",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/transfers/{{transferId}}/accept-quote",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "transfers",
+                "{{transferId}}",
+                "accept-quote"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accept\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get transfer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/transfers/{{transferId}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "transfers",
+                "{{transferId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list outgoing transfers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/transfers",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "transfers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list incoming transfers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/transfers/incoming",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "transfers",
+                "incoming"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "disbursements (G2P)",
+      "description": "G2P batches paid by a party of the logged-in DFSP (log in as sdkbank-user).\n\nFlow: create → validate → poll get until VALIDATED → check the items → approve → poll get until COMPLETED, PARTIALLY_COMPLETED or FAILED.\n\nIn BULK mode (the default, `mode` in the response) validate starts the SDK's /bulkTransactions: the SDK looks every payee up through the ALS, approve accepts the parties, and the hub then runs one bulk quote and one bulk transfer (bulk-api-adapter) per payee DFSP. In INDIVIDUAL mode the scheduler pays each item as its own transfer.\n\nThe payer is {{governmentMsisdn}}, the government customer that scripts/setup-sdk-adapter.sh creates (step 7).",
+      "item": [
+        {
+          "name": "create disbursement",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/disbursements",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "disbursements"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": {\n    \"idType\": \"MSISDN\",\n    \"idValue\": \"{{governmentMsisdn}}\"\n  },\n  \"currency\": \"CVE\",\n  \"reference\": \"Subsidio outubro 2026\",\n  \"note\": \"postman test\",\n  \"items\": [\n    {\n      \"to\": {\n        \"idType\": \"MSISDN\",\n        \"idValue\": \"{{payeeMsisdn}}\"\n      },\n      \"amount\": 250,\n      \"note\": \"beneficiary 1\"\n    },\n    {\n      \"to\": {\n        \"idType\": \"MSISDN\",\n        \"idValue\": \"2389999999\"\n      },\n      \"amount\": 10\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates the batch (CREATED) and its items (PENDING). Rejected with 400 naming the line for a missing payee, a bad amount, a repeated payee or the payer as payee. The second item is an unknown MSISDN: validation marks it INVALID (3204) and it is not paid, so the batch ends PARTIALLY_COMPLETED."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code < 300) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set(\"disbursementId\", body.disbursementId);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "validate",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/disbursements/{{disbursementId}}/validate",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "disbursements",
+                "{{disbursementId}}",
+                "validate"
+              ]
+            },
+            "description": "Starts the payee lookups (VALIDATING); the batch is VALIDATED once every item is VALID or INVALID. BULK: sends POST /bulkTransactions to the payer's SDK, which reports the parties back; a BULK batch is validated only once (409 3100 after that). INDIVIDUAL: validating a VALIDATED batch again looks every payee up again."
+          },
+          "response": []
+        },
+        {
+          "name": "get disbursement",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/disbursements/{{disbursementId}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "disbursements",
+                "{{disbursementId}}"
+              ]
+            },
+            "description": "State and counters: committedCount/committedAmount (paid) and failedCount (FAILED or INVALID items)."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code < 300) {",
+                  "  const body = pm.response.json();",
+                  "  console.log(`disbursement ${body.disbursementId}: ${body.state}, ${body.committedCount}/${body.itemCount} paid, ${body.failedCount} not paid`);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "list items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/disbursements/{{disbursementId}}/items",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "disbursements",
+                "{{disbursementId}}",
+                "items"
+              ]
+            },
+            "description": "Every item with its state, the payee name and FSP found by validation, the transferId once sent, and the FSPIOP error of a failed item."
+          },
+          "response": []
+        },
+        {
+          "name": "list invalid items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/disbursements/{{disbursementId}}/items?state=INVALID",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "disbursements",
+                "{{disbursementId}}",
+                "items"
+              ],
+              "query": [
+                {
+                  "key": "state",
+                  "value": "INVALID"
+                }
+              ]
+            },
+            "description": "Filter by item state: PENDING, VALID, INVALID, QUEUED, SUBMITTED, COMMITTED, FAILED or SKIPPED."
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/disbursements/{{disbursementId}}/approve",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "disbursements",
+                "{{disbursementId}}",
+                "approve"
+              ]
+            },
+            "description": "Pays the VALID items (EXECUTING). Refused with 409 3100 unless VALIDATED, and with 409 4001 when the payer's available balance doesn't cover the valid items. BULK: accepts the parties; the app then reserves and accepts each bulk quote as it arrives, and the bulk transfers follow."
+          },
+          "response": []
+        },
+        {
+          "name": "cancel",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/disbursements/{{disbursementId}}/cancel",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "disbursements",
+                "{{disbursementId}}",
+                "cancel"
+              ]
+            },
+            "description": "Skips every item not yet sent (CANCELLED); items already sent finish normally. Refused with 409 once the batch is final."
+          },
+          "response": []
+        },
+        {
+          "name": "list disbursements",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/disbursements",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "disbursements"
+              ]
+            },
+            "description": "The logged-in DFSP's batches, newest first."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "settlements",
+      "item": [
+        {
+          "name": "list reconciliations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/settlements",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "settlements"
+              ]
+            },
+            "description": "Reconciliation results of the logged-in DFSP. Needs a DFSP user (fsp_id claim): with the sdk-admin token it answers 403."
+          },
+          "response": []
+        },
+        {
+          "name": "reconcile now",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/settlements/reconcile",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "settlements",
+                "reconcile"
+              ]
+            },
+            "description": "Runs reconciliation for every hosted DFSP (role admin): hub positions vs ledger POSITION balances, and settled hub settlements."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "sdk backend (what the SDK calls)",
+      "description": "The core-connector API this app serves to each DFSP's SDK at /sdk/{fspId}. Not Keycloak-protected. Calling it directly shows what the payee answers the hub; errors come as {statusCode, message}.",
+      "item": [
+        {
+          "name": "payee party lookup",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/sdk/sdkwallet/parties/MSISDN/{{payeeMsisdn}}",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "sdk",
+                "sdkwallet",
+                "parties",
+                "MSISDN",
+                "{{payeeMsisdn}}"
+              ]
+            },
+            "description": "What sdkwallet answers when the hub asks for this MSISDN. 404 with statusCode 3204 when it doesn't host it.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payee quote",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/sdk/sdkwallet/quoterequests",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "sdk",
+                "sdkwallet",
+                "quoterequests"
+              ]
+            },
+            "description": "Prices a SEND quote the way the payee SDK would ask for it. Stores a QUOTED incoming row that expires unused.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quoteId\": \"{{$guid}}\",\n  \"transactionId\": \"{{$guid}}\",\n  \"from\": {\n    \"idType\": \"MSISDN\",\n    \"idValue\": \"{{payerMsisdn}}\",\n    \"fspId\": \"sdkbank\"\n  },\n  \"to\": {\n    \"idType\": \"MSISDN\",\n    \"idValue\": \"{{payeeMsisdn}}\",\n    \"fspId\": \"sdkwallet\"\n  },\n  \"amountType\": \"SEND\",\n  \"amount\": \"10\",\n  \"currency\": \"CVE\",\n  \"transactionType\": \"TRANSFER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "sdk outbound (direct)",
+      "description": "The SDK scheme adapters' outbound API, called directly, bypassing this app. Useful to tell an app problem from an SDK or hub problem.",
+      "item": [
+        {
+          "name": "sdkbank: lookup party",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{sdkbank_outbound}}/parties/MSISDN/{{payeeMsisdn}}",
+              "host": [
+                "{{sdkbank_outbound}}"
+              ],
+              "path": [
+                "parties",
+                "MSISDN",
+                "{{payeeMsisdn}}"
+              ]
+            },
+            "description": "Discovery through sdkbank's SDK and the hub's ALS.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sdkbank: transfer state",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{sdkbank_outbound}}/transfers/{{transferId}}",
+              "host": [
+                "{{sdkbank_outbound}}"
+              ],
+              "path": [
+                "transfers",
+                "{{transferId}}"
+              ]
+            },
+            "description": "Asks the hub, through sdkbank's SDK, for the state of the last transfer sent from this collection.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sdkwallet: lookup party",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{sdkwallet_outbound}}/parties/MSISDN/{{payerMsisdn}}",
+              "host": [
+                "{{sdkwallet_outbound}}"
+              ],
+              "path": [
+                "parties",
+                "MSISDN",
+                "{{payerMsisdn}}"
+              ]
+            },
+            "description": "Discovery of the payer MSISDN through sdkwallet's SDK.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hub (read-only)",
+      "description": "central-ledger admin reads, to compare the hub's view with the app's ledger.",
+      "item": [
+        {
+          "name": "participants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hub_admin_url}}/participants",
+              "host": [
+                "{{hub_admin_url}}"
+              ],
+              "path": [
+                "participants"
+              ]
+            },
+            "description": "Every participant in the hub.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sdkbank positions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hub_admin_url}}/participants/sdkbank/positions",
+              "host": [
+                "{{hub_admin_url}}"
+              ],
+              "path": [
+                "participants",
+                "sdkbank",
+                "positions"
+              ]
+            },
+            "description": "Should equal sdkbank's POSITION balance in the app.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sdkwallet positions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hub_admin_url}}/participants/sdkwallet/positions",
+              "host": [
+                "{{hub_admin_url}}"
+              ],
+              "path": [
+                "participants",
+                "sdkwallet",
+                "positions"
+              ]
+            },
+            "description": "Should equal sdkwallet's POSITION balance in the app.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sdkbank accounts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hub_admin_url}}/participants/sdkbank/accounts",
+              "host": [
+                "{{hub_admin_url}}"
+              ],
+              "path": [
+                "participants",
+                "sdkbank",
+                "accounts"
+              ]
+            },
+            "description": "POSITION and SETTLEMENT accounts in the hub, with the recorded funds.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sdkbank endpoints",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hub_admin_url}}/participants/sdkbank/endpoints",
+              "host": [
+                "{{hub_admin_url}}"
+              ],
+              "path": [
+                "participants",
+                "sdkbank",
+                "endpoints"
+              ]
+            },
+            "description": "Callback endpoints; they should point at http://sdkbank-sdk:4000.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "payerMsisdn",
+      "value": "2389930000"
+    },
+    {
+      "key": "payeeMsisdn",
+      "value": "2389940000"
+    },
+    {
+      "key": "governmentMsisdn",
+      "value": "2389950000"
+    },
+    {
+      "key": "msisdn",
+      "value": "2389930001"
+    },
+    {
+      "key": "fspId",
+      "value": "sdktest"
+    },
+    {
+      "key": "sdkOutboundUrl",
+      "value": "http://localhost:4301"
+    },
+    {
+      "key": "customerId",
+      "value": ""
+    },
+    {
+      "key": "accountId",
+      "value": ""
+    },
+    {
+      "key": "partyId",
+      "value": ""
+    },
+    {
+      "key": "transferId",
+      "value": ""
+    },
+    {
+      "key": "disbursementId",
+      "value": ""
+    }
+  ]
+}
