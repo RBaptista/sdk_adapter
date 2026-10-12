@@ -1,0 +1,1578 @@
+{
+  "title": "Mojaloop - Settlements",
+  "uid": "mojaloop-settlements",
+  "tags": [
+    "mojaloop",
+    "settlement",
+    "sdk-adapter"
+  ],
+  "timezone": "browser",
+  "editable": true,
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "type": "row",
+      "title": "Now",
+      "id": 1,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "panels": []
+    },
+    {
+      "type": "stat",
+      "title": "Open window",
+      "description": "",
+      "id": 2,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT (SELECT sw.settlementWindowId FROM settlementWindow sw JOIN settlementWindowStateChange sc ON sc.settlementWindowStateChangeId = sw.currentStateChangeId WHERE sc.settlementWindowStateId = 'OPEN' ORDER BY sw.settlementWindowId DESC LIMIT 1) AS `window`"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Open for",
+      "description": "Time since the open settlement window was opened. It grows until the window is closed.",
+      "id": 3,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT TIMESTAMPDIFF(SECOND, createdDate, NOW()) AS age FROM settlementWindow WHERE settlementWindowId = (SELECT sw.settlementWindowId FROM settlementWindow sw JOIN settlementWindowStateChange sc ON sc.settlementWindowStateChangeId = sw.currentStateChangeId WHERE sc.settlementWindowStateId = 'OPEN' ORDER BY sw.settlementWindowId DESC LIMIT 1)"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 3600
+              },
+              {
+                "color": "red",
+                "value": 86400
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Transfers in open window",
+      "description": "",
+      "id": 4,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) AS transfers FROM transferFulfilment WHERE settlementWindowId = (SELECT sw.settlementWindowId FROM settlementWindow sw JOIN settlementWindowStateChange sc ON sc.settlementWindowStateChangeId = sw.currentStateChangeId WHERE sc.settlementWindowStateId = 'OPEN' ORDER BY sw.settlementWindowId DESC LIMIT 1)"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Windows awaiting settlement",
+      "description": "Closed windows that are not settled yet (PROCESSING, CLOSED or PENDING_SETTLEMENT).",
+      "id": 5,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) FROM settlementWindow sw JOIN settlementWindowStateChange sc ON sc.settlementWindowStateChangeId = sw.currentStateChangeId WHERE sc.settlementWindowStateId IN ('PROCESSING','CLOSED','PENDING_SETTLEMENT')"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Settlements in progress",
+      "description": "",
+      "id": 6,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) FROM settlement s JOIN settlementStateChange sc ON sc.settlementStateChangeId = s.currentStateChangeId WHERE sc.settlementStateId NOT IN ('SETTLED','ABORTED')"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Aborted settlements (range)",
+      "description": "",
+      "id": 7,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) FROM settlement s JOIN settlementStateChange sc ON sc.settlementStateChangeId = s.currentStateChangeId WHERE sc.settlementStateId = 'ABORTED' AND $__timeFilter(s.createdDate)"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Settled (range)",
+      "description": "",
+      "id": 8,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) FROM settlement s JOIN settlementStateChange sc ON sc.settlementStateChangeId = s.currentStateChangeId WHERE sc.settlementStateId = 'SETTLED' AND $__timeFilter(s.createdDate)"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Net volume settled (range)",
+      "description": "Sum of the net amounts debtor DFSPs paid in settled settlements (equal to what creditors received).",
+      "id": 9,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT COALESCE(SUM(spc.netAmount), 0) FROM settlementParticipantCurrency spc JOIN settlement s ON s.settlementId = spc.settlementId JOIN settlementStateChange sc ON sc.settlementStateChangeId = s.currentStateChangeId WHERE sc.settlementStateId = 'SETTLED' AND spc.netAmount > 0 AND $__timeFilter(s.createdDate)"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Avg time to settle (range)",
+      "description": "From settlement creation (PENDING_SETTLEMENT) to SETTLED.",
+      "id": 10,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT AVG(TIMESTAMPDIFF(SECOND, s.createdDate, sc.createdDate)) FROM settlement s JOIN settlementStateChange sc ON sc.settlementStateChangeId = s.currentStateChangeId WHERE sc.settlementStateId = 'SETTLED' AND $__timeFilter(s.createdDate)"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Avg window close time (range)",
+      "description": "From the close request (PROCESSING) until central-settlement's close handler marks the window CLOSED.",
+      "id": 11,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT AVG(TIMESTAMPDIFF(SECOND, p.createdDate, c.createdDate)) FROM settlementWindowStateChange p JOIN settlementWindowStateChange c ON c.settlementWindowId = p.settlementWindowId AND c.settlementWindowStateId = 'CLOSED' WHERE p.settlementWindowStateId = 'PROCESSING' AND $__timeFilter(p.createdDate)"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Windows closed (range)",
+      "description": "",
+      "id": 12,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) FROM settlementWindowStateChange WHERE settlementWindowStateId = 'CLOSED' AND $__timeFilter(createdDate)"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Settlement Kafka consumer lag",
+      "id": 13,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 5
+      },
+      "description": "Unconsumed messages for central-settlement's Kafka consumers (window close and notifications). Needs kafka-exporter.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "refId": "A",
+          "expr": "sum(kafka_consumergroup_lag_sum{consumergroup=~\"cs-group.*\"})"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "area",
+        "textMode": "value"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "row",
+      "title": "Positions and liquidity",
+      "id": 14,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Net debit position per DFSP",
+      "description": "The hub position of each DFSP (positive = owes the scheme). Settling a window with autoPositionReset moves it back by the settled net amount. Annotations: window closes and settled settlements.",
+      "id": 15,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 16,
+        "x": 0,
+        "y": 10
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "time_series",
+          "rawSql": "SELECT ppc.createdDate AS time, p.name AS metric, ppc.value AS position FROM participantPositionChange ppc JOIN participantPosition pp ON pp.participantPositionId = ppc.participantPositionId JOIN participantCurrency pc ON pc.participantCurrencyId = pp.participantCurrencyId JOIN participant p ON p.participantId = pc.participantId WHERE pc.ledgerAccountTypeId = (SELECT ledgerAccountTypeId FROM ledgerAccountType WHERE name = 'POSITION') AND $__timeFilter(ppc.createdDate) ORDER BY ppc.createdDate"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 1,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "spanNulls": true
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "table",
+      "title": "Liquidity per DFSP",
+      "description": "Current position against the net debit cap, and the settlement account balance, which changes with funds in and out (settling a window moves the positions, not this account).",
+      "id": 16,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 10
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT p.name AS dfsp, pc.currencyId AS currency, pos.value AS position, lim.value AS ndc, ROUND(100 * GREATEST(pos.value, 0) / NULLIF(lim.value, 0), 1) AS `ndc used %`, -stl.value AS `settlement balance`, -stl.value - pos.value AS `liquidity left` FROM participant p JOIN participantCurrency pc ON pc.participantId = p.participantId AND pc.ledgerAccountTypeId = (SELECT ledgerAccountTypeId FROM ledgerAccountType WHERE name = 'POSITION') JOIN participantPosition pos ON pos.participantCurrencyId = pc.participantCurrencyId LEFT JOIN participantLimit lim ON lim.participantCurrencyId = pc.participantCurrencyId AND lim.isActive = 1 LEFT JOIN participantCurrency sc ON sc.participantId = p.participantId AND sc.currencyId = pc.currencyId AND sc.ledgerAccountTypeId = (SELECT ledgerAccountTypeId FROM ledgerAccountType WHERE name = 'SETTLEMENT') LEFT JOIN participantPosition stl ON stl.participantCurrencyId = sc.participantCurrencyId WHERE p.name <> 'Hub' ORDER BY p.name"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ndc used %"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "basic"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 100
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "row",
+      "title": "Settlements",
+      "id": 17,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Net settlement amount per DFSP",
+      "description": "Per settlement: positive = the DFSP is a net debtor and pays, negative = it receives.",
+      "id": 18,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "time_series",
+          "rawSql": "SELECT s.createdDate AS time, p.name AS metric, spc.netAmount AS net FROM settlementParticipantCurrency spc JOIN settlement s ON s.settlementId = spc.settlementId JOIN participantCurrency pc ON pc.participantCurrencyId = spc.participantCurrencyId JOIN participant p ON p.participantId = pc.participantId WHERE $__timeFilter(s.createdDate) ORDER BY s.createdDate"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "bars",
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "auto",
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "spanNulls": true
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Transfers per settlement window",
+      "description": "Fulfilled transfers in each window, at the time the window opened.",
+      "id": 19,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 20
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "time_series",
+          "rawSql": "SELECT sw.createdDate AS time, 'transfers' AS metric, COUNT(tf.transferId) AS transfers FROM settlementWindow sw LEFT JOIN transferFulfilment tf ON tf.settlementWindowId = sw.settlementWindowId WHERE $__timeFilter(sw.createdDate) GROUP BY sw.settlementWindowId, sw.createdDate ORDER BY sw.createdDate"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "bars",
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "auto",
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "spanNulls": true
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Settlement Kafka events",
+      "description": "Window-close events published to central-settlement's handler, and its consumer lag (kafka-exporter).",
+      "id": 20,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 20
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "refId": "A",
+          "legendFormat": "{{topic}}",
+          "expr": "sum by (topic) (increase(kafka_topic_partition_current_offset{topic=\"topic-deferredsettlement-close\"}[$__rate_interval]))"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "refId": "B",
+          "legendFormat": "lag {{consumergroup}}",
+          "expr": "sum by (consumergroup) (kafka_consumergroup_lag_sum{consumergroup=~\"cs-group.*\"})"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "barAlignment": 0,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "spanNulls": true
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "table",
+      "title": "Settlements",
+      "description": "",
+      "id": 21,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 14,
+        "x": 0,
+        "y": 28
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT s.settlementId AS settlement, sc.settlementStateId AS state, sm.name AS model, (SELECT GROUP_CONCAT(ssw.settlementWindowId ORDER BY ssw.settlementWindowId) FROM settlementSettlementWindow ssw WHERE ssw.settlementId = s.settlementId) AS windows, s.createdDate AS created, sc.createdDate AS `last change`, TIMESTAMPDIFF(SECOND, s.createdDate, sc.createdDate) AS `duration s`, (SELECT COUNT(*) FROM settlementParticipantCurrency spc WHERE spc.settlementId = s.settlementId) AS accounts, (SELECT SUM(GREATEST(spc.netAmount, 0)) FROM settlementParticipantCurrency spc WHERE spc.settlementId = s.settlementId) AS `net volume`, s.reason FROM settlement s JOIN settlementStateChange sc ON sc.settlementStateChangeId = s.currentStateChangeId JOIN settlementModel sm ON sm.settlementModelId = s.settlementModelId WHERE $__timeFilter(s.createdDate) ORDER BY s.settlementId DESC LIMIT 100"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "state"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "OPEN": {
+                        "color": "blue",
+                        "index": 0
+                      },
+                      "PROCESSING": {
+                        "color": "purple",
+                        "index": 1
+                      },
+                      "CLOSED": {
+                        "color": "orange",
+                        "index": 2
+                      },
+                      "PENDING_SETTLEMENT": {
+                        "color": "orange",
+                        "index": 3
+                      },
+                      "PS_TRANSFERS_RECORDED": {
+                        "color": "yellow",
+                        "index": 4
+                      },
+                      "PS_TRANSFERS_RESERVED": {
+                        "color": "yellow",
+                        "index": 5
+                      },
+                      "PS_TRANSFERS_COMMITTED": {
+                        "color": "light-green",
+                        "index": 6
+                      },
+                      "SETTLING": {
+                        "color": "light-green",
+                        "index": 7
+                      },
+                      "SETTLED": {
+                        "color": "green",
+                        "index": 8
+                      },
+                      "ABORTED": {
+                        "color": "red",
+                        "index": 9
+                      },
+                      "FAILED": {
+                        "color": "red",
+                        "index": 10
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "table",
+      "title": "Settlement windows",
+      "description": "",
+      "id": 22,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 10,
+        "x": 14,
+        "y": 28
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT sw.settlementWindowId AS `window`, sc.settlementWindowStateId AS state, sw.createdDate AS opened, (SELECT MIN(c.createdDate) FROM settlementWindowStateChange c WHERE c.settlementWindowId = sw.settlementWindowId AND c.settlementWindowStateId = 'CLOSED') AS closed, (SELECT COUNT(*) FROM transferFulfilment tf WHERE tf.settlementWindowId = sw.settlementWindowId) AS transfers, (SELECT GROUP_CONCAT(ssw.settlementId) FROM settlementSettlementWindow ssw WHERE ssw.settlementWindowId = sw.settlementWindowId) AS settlement FROM settlementWindow sw JOIN settlementWindowStateChange sc ON sc.settlementWindowStateChangeId = sw.currentStateChangeId ORDER BY sw.settlementWindowId DESC LIMIT 100"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "state"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "OPEN": {
+                        "color": "blue",
+                        "index": 0
+                      },
+                      "PROCESSING": {
+                        "color": "purple",
+                        "index": 1
+                      },
+                      "CLOSED": {
+                        "color": "orange",
+                        "index": 2
+                      },
+                      "PENDING_SETTLEMENT": {
+                        "color": "orange",
+                        "index": 3
+                      },
+                      "PS_TRANSFERS_RECORDED": {
+                        "color": "yellow",
+                        "index": 4
+                      },
+                      "PS_TRANSFERS_RESERVED": {
+                        "color": "yellow",
+                        "index": 5
+                      },
+                      "PS_TRANSFERS_COMMITTED": {
+                        "color": "light-green",
+                        "index": 6
+                      },
+                      "SETTLING": {
+                        "color": "light-green",
+                        "index": 7
+                      },
+                      "SETTLED": {
+                        "color": "green",
+                        "index": 8
+                      },
+                      "ABORTED": {
+                        "color": "red",
+                        "index": 9
+                      },
+                      "FAILED": {
+                        "color": "red",
+                        "index": 10
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "table",
+      "title": "Settlement state changes",
+      "description": "Every window, settlement and per-DFSP settlement account transition, newest first.",
+      "id": 23,
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT * FROM (SELECT sc.createdDate AS time, CONCAT('settlement ', sc.settlementId) AS object, '' AS dfsp, sc.settlementStateId AS state, sc.reason, NULL AS `external reference` FROM settlementStateChange sc WHERE $__timeFilter(sc.createdDate) UNION ALL SELECT c.createdDate, CONCAT('settlement ', spc.settlementId), p.name, c.settlementStateId, c.reason, c.externalReference FROM settlementParticipantCurrencyStateChange c JOIN settlementParticipantCurrency spc ON spc.settlementParticipantCurrencyId = c.settlementParticipantCurrencyId JOIN participantCurrency pc ON pc.participantCurrencyId = spc.participantCurrencyId JOIN participant p ON p.participantId = pc.participantId WHERE $__timeFilter(c.createdDate) UNION ALL SELECT wc.createdDate, CONCAT('window ', wc.settlementWindowId), '', wc.settlementWindowStateId, wc.reason, NULL FROM settlementWindowStateChange wc WHERE $__timeFilter(wc.createdDate)) x ORDER BY time DESC LIMIT 200"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "state"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "OPEN": {
+                        "color": "blue",
+                        "index": 0
+                      },
+                      "PROCESSING": {
+                        "color": "purple",
+                        "index": 1
+                      },
+                      "CLOSED": {
+                        "color": "orange",
+                        "index": 2
+                      },
+                      "PENDING_SETTLEMENT": {
+                        "color": "orange",
+                        "index": 3
+                      },
+                      "PS_TRANSFERS_RECORDED": {
+                        "color": "yellow",
+                        "index": 4
+                      },
+                      "PS_TRANSFERS_RESERVED": {
+                        "color": "yellow",
+                        "index": 5
+                      },
+                      "PS_TRANSFERS_COMMITTED": {
+                        "color": "light-green",
+                        "index": 6
+                      },
+                      "SETTLING": {
+                        "color": "light-green",
+                        "index": 7
+                      },
+                      "SETTLED": {
+                        "color": "green",
+                        "index": 8
+                      },
+                      "ABORTED": {
+                        "color": "red",
+                        "index": 9
+                      },
+                      "FAILED": {
+                        "color": "red",
+                        "index": 10
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      },
+      {
+        "datasource": {
+          "type": "mysql",
+          "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+        },
+        "enable": true,
+        "iconColor": "orange",
+        "name": "Window closed",
+        "target": {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT createdDate AS time, CONCAT('window ', settlementWindowId, ' closed') AS text, 'window' AS tags FROM settlementWindowStateChange WHERE settlementWindowStateId = 'CLOSED' AND $__timeFilter(createdDate)"
+        }
+      },
+      {
+        "datasource": {
+          "type": "mysql",
+          "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+        },
+        "enable": true,
+        "iconColor": "green",
+        "name": "Settled",
+        "target": {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "editorMode": "code",
+          "format": "table",
+          "rawSql": "SELECT createdDate AS time, CONCAT('settlement ', settlementId, ' SETTLED') AS text, 'settlement' AS tags FROM settlementStateChange WHERE settlementStateId = 'SETTLED' AND $__timeFilter(createdDate)"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+# Prometheus config for ml-core-test-harness's monitoring stack, scraping the containers this hub
+# actually runs (the harness's own config targets its performance profile: scaled ml-core-*-N
+# replicas and perf simulators). Mounted over the harness's prometheus.yml by docker-compose.yml.
+
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+  external_labels:
+    monitor: 'sdk-adapter'
+
+rule_files:
+  - 'alert.rules'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: 'mojaloop-services'
+    static_configs:
+      - targets: [
+          # discovery: 4001 is the admin API (oracles), 4002 the FSPIOP API (parties, participants)
+          'account-lookup-service:4001',
+          'account-lookup-service:4002',
+          # agreement
+          'quoting-service:3002',
+          'quoting-service-handler:3003',
+          # transfers: central-ledger runs the prepare, fulfil, timeout and admin handlers itself
+          'ml-api-adapter:3000',
+          'central-ledger:3001',
+          'central-handler-position-batch:3001',
+          # bulk
+          'bulk-api-adapter:3003',
+        ]
+
+  - job_name: 'sdk-scheme-adapters'
+    static_configs:
+      - targets: [
+          'sdkbank-sdk:4004',
+          'sdkwallet-sdk:4004',
+          'payerfsp-sdk:4004',
+          'payeefsp-sdk:4004',
+          'testfsp1-sdk:4004',
+          'testfsp2-sdk:4004',
+          'testfsp3-sdk:4004',
+          'testfsp4-sdk:4004',
+        ]
+
+  - job_name: 'support-services'
+    static_configs:
+      - targets: [
+          'simulator:8444',
+          'kafka-exporter:9308',
+          'mysqlexporter-als:9104',
+          'mysqlexporter-cl:9104',
+        ]

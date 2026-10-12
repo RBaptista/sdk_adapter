@@ -1,0 +1,22 @@
+# Override for ml-core-test-harness's docker-compose-monitoring.yml, so its Prometheus and Grafana
+# (and dashboards) watch this hub. Run it through ./scripts/monitoring.sh: compose resolves relative
+# paths against the harness directory, so this file uses SDK_MONITORING_DIR, which the script sets.
+
+services:
+  prometheus:
+    volumes:
+      - ${SDK_MONITORING_DIR:?run ./scripts/monitoring.sh}/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    volumes:
+      - ${SDK_MONITORING_DIR:?run ./scripts/monitoring.sh}/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro
+      # extra dashboards (Mojaloop - Settlements), next to the harness's
+      - ${SDK_MONITORING_DIR:?run ./scripts/monitoring.sh}/dashboards:/etc/grafana/provisioning/dashboards/sdk-adapter:ro
+    environment:
+      GF_SECURITY_DATA_SOURCE_PROXY_WHITELIST: mysql:3306
+
+  # the central-ledger database is the container "mysql" here, not "mysql-cl"
+  mysqlexporter-cl:
+    command:
+      - --mysqld.address=mysql:3306
+      - --mysqld.username=exporter
